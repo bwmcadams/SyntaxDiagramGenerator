@@ -1,0 +1,4 @@
+<plugin>
+  <name>SyntaxDiagramGenerator</name>
+  <classname>net.t32leaves.syntaxDiagramGenerator.DiagramGenerator</classname>
+</plugin>
