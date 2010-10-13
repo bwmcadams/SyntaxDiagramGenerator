@@ -1,5 +1,7 @@
 package net.t32leaves.syntaxDiagramGenerator
 
+import scala.util.parsing.combinator._
+
 case class ProductionRule(name: String, expr: Expression) {
   override def toString = name + " = " + expr + ";"
 }
@@ -33,14 +35,18 @@ object ExpressionUtils {
   def compact(expr: Expression): Expression = expr match {
     case OrExpression(OrExpression(c) :: rest) => compact(OrExpression(c ++ rest))
     case SeqExpression(SeqExpression(c) :: rest) => compact(SeqExpression(c ++ rest))
-    case OrExpression(c) if c.length == 1 => compact(c.first)
-    case SeqExpression(c) if c.length == 1 => compact(c.first)
+    case OrExpression(c) if c.length == 1 => compact(c.head)
+    case SeqExpression(c) if c.length == 1 => compact(c.head)
     case OrExpression(c) => OrExpression(c map(compact(_)))
     case SeqExpression(c) => SeqExpression(c map(compact(_)))
     case OptionExpression(c) => OptionExpression(compact(c))
     case OneToManyExpression(c) => OneToManyExpression(compact(c))
     case ZeroToManyExpression(c) => ZeroToManyExpression(compact(c))
-    case _ => expr
+    case _ => {
+      println("Unable to compact unknown expression '%s' (%s)".format(expr, expr.getClass))
+      expr
+    }
+    //case _ => expr
   }
   def filterNil(l: List[Expression]) = l filter(_ match {
     case NilExpression => false

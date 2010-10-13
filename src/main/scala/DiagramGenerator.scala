@@ -9,6 +9,9 @@ import nsc.ast.TreeBrowsers
 import nsc.plugins.Plugin
 import nsc.plugins.PluginComponent
 
+import scala.util.matching.Regex
+
+import scala.util.parsing.combinator.Parsers
 
 /*
  * Assumptions and conventions
@@ -20,6 +23,7 @@ import nsc.plugins.PluginComponent
 
 class DiagramGenerator(val global: Global) extends Plugin {
   import global._
+  val repsepRE = new Regex("^[0-9a-zA-Z]*\\.this\\.repsep")
   val pluginArgs: List[String] = List[String]()
   val name = "generateDiagrams"
   val description = "Generates syntax diagrams out of parser combinator"
@@ -30,7 +34,7 @@ class DiagramGenerator(val global: Global) extends Plugin {
   var depth = {
     var t = pluginArgs.filter(_.startsWith("-P:depth:"))
     if(t.isEmpty) 1
-    else t.first.substring("-P:depth:".length).toInt
+    else t.head.substring("-P:depth:".length).toInt
   }
   
   
@@ -45,16 +49,14 @@ class DiagramGenerator(val global: Global) extends Plugin {
     class DiagramGeneratorPhase(prev: Phase) extends StdPhase(prev) {
       override def name = DiagramGenerator.this.name
       def apply(unit: CompilationUnit) {
-        val name = unit.source.toString.split("\\.").first
+        val name = unit.source.toString.split("\\.").head
         val expressions = DiagramGenerator.this.rules(unit.body, name)
+        println("Expressions... %s".format(expressions))
         val cleanedExpressions = ExpressionUtils.cleanRules(expressions, virtualRules, depth)
         println(cleanedExpressions mkString("\n"))
         cleanedExpressions.foreach(e => {
           try {
-            println("* " + e.expr + " / " + e.getClass)
-            println("* " + e.name)
             val diag = ExpressionDiagram(e.expr, e.name)
-            println("DIAG: ".format(diag))
             diag.stream(new OutputStreamWriter(new FileOutputStream(e.name + ".svg"), "UTF-8"), true)
             ExpressionDiagram.transcode(e.name, "png")
             ExpressionDiagram.transcode(e.name, "pdf")
@@ -79,7 +81,7 @@ class DiagramGenerator(val global: Global) extends Plugin {
     case Select(qualifier, name) => name.toString match {
       case "$plus" => OneToManyExpression(buildExpression(qualifier))
       case "$bar" => OrExpression(List(buildExpression(qualifier)))
-      case "$tilde" => SeqExpression(List(buildExpression(qualifier)))
+      case "$tilde" | "$less$tilde" | "$tilde$greater" => SeqExpression(List(buildExpression(qualifier)))
       case "$qmark" => OptionExpression(buildExpression(qualifier))
       case "$times" => ZeroToManyExpression(buildExpression(qualifier))
       case "$up$up" => buildExpression(qualifier)
@@ -91,11 +93,18 @@ class DiagramGenerator(val global: Global) extends Plugin {
       case "r" => buildExpression(qualifier)
       case nm => SeqExpression(List(RuleRefExpression(nm), buildExpression(qualifier)))
     }
-    case Apply(fun, args) => buildExpression(fun) match {
-      case OrExpression(c) => OrExpression(c ++ args.map(buildExpression(_)))
-      case SeqExpression(c) => SeqExpression(c ++ args.map(buildExpression(_)))
-      case NilExpression if args.length == 1 => buildExpression(args.first)
-      case r => r
+    case Apply(fun, args) => {
+      if (repsepRE.findFirstIn(fun.toString).isDefined) {
+        println("Repsep: %s".format(args(0)))
+        val rs = SeqExpression(List(OneToManyExpression(buildExpression(args(0))), OptionExpression(buildExpression(args(1)))))
+        println("RS: %s".format(rs))
+        rs
+      } else buildExpression(fun) match {
+        case OrExpression(c) => OrExpression(c ++ args.map(buildExpression(_)))
+        case SeqExpression(c) => SeqExpression(c ++ args.map(buildExpression(_)))
+        case NilExpression if args.length == 1 => buildExpression(args.head)
+        case r => r
+      }
     }
     case TypeApply(fun, args) => buildExpression(fun)
     case Literal(Constant(l)) => LiteralExpression(l.toString)
