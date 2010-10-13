@@ -96,7 +96,7 @@ class DiagramGenerator(val global: Global) extends Plugin {
     case Apply(fun, args) => {
       if (repsepRE.findFirstIn(fun.toString).isDefined) {
         println("Repsep: %s".format(args(0)))
-        val rs = SeqExpression(List(OneToManyExpression(buildExpression(args(0))), OptionExpression(buildExpression(args(1)))))
+        val rs = OneToManyExpression(SeqExpression(args.map(buildExpression(_))))
         println("RS: %s".format(rs))
         rs
       } else buildExpression(fun) match {
