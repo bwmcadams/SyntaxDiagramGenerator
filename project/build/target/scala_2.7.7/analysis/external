@@ -1,7 +1,0 @@
-#External Dependencies
-#Tue Oct 12 15:58:51 EDT 2010
-/Volumes/Iomega_HDD/SyntaxDiagramGenerator/project/boot/scala-2.7.7/org.scala-tools.sbt/sbt/0.7.4/compile_2.7.7-0.7.4.jar=SyntaxDiagramGeneratorProject.scala
-/Volumes/Iomega_HDD/SyntaxDiagramGenerator/project/boot/scala-2.7.7/lib/scala-library.jar=SyntaxDiagramGeneratorProject.scala
-/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar=SyntaxDiagramGeneratorProject.scala
-/Volumes/Iomega_HDD/SyntaxDiagramGenerator/project/boot/scala-2.7.7/org.scala-tools.sbt/sbt/0.7.4/ivy_2.7.7-0.7.4.jar=SyntaxDiagramGeneratorProject.scala
-/Volumes/Iomega_HDD/SyntaxDiagramGenerator/project/boot/scala-2.7.7/org.scala-tools.sbt/sbt/0.7.4/sbt_2.7.7-0.7.4.jar=SyntaxDiagramGeneratorProject.scala
