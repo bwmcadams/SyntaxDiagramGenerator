@@ -78,7 +78,7 @@ object ExpressionUtils {
     val compacted = prodRules.map(_ match {
       case ProductionRule(n, c) => ProductionRule(n, compact(cleanFromNil(c)))
     })
-    val rules = (Map[String, Expression]() /: compacted)((m, e) => m update (e.name, e.expr))
+    val rules = (Map[String, Expression]() /: compacted)((m, e) => m updated (e.name, e.expr))
     compacted.map(_ match {
       case ProductionRule(n, c) => ProductionRule(n, resolveVirtualRules(c, rules, virtualRules, depth))
     })
