@@ -210,7 +210,7 @@ object ExpressionDiagram {
       case "png" => new PNGTranscoder()
       case "pdf" => new PDFTranscoder()
     }
-    val input = new TranscoderInput(new java.io.File(name + ".svg").toURL().toString())
+    val input = new TranscoderInput(new java.io.File(name + ".svg").toURI.toURL.toString)
 
     // Create the transcoder output.
     val ostream = new FileOutputStream(name + "." + format)
