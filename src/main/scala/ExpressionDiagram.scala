@@ -1,27 +1,17 @@
 package net.t32leaves.syntaxDiagramGenerator
 
-import javax.imageio.ImageIO
-import java.io.{File, FileOutputStream}
-import java.awt.{Graphics, Font, Graphics2D, Dimension, Color}
-import java.awt.image.BufferedImage
+import java.io.FileOutputStream
+import java.awt.{Font, Graphics2D, Dimension}
 import java.awt.geom._;
 
-import javax.swing._;
-
-import org.apache.batik.swing._;
-import org.apache.batik.svggen._;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.dom.svg.SVGDOMImplementation;
 
-import org.w3c.dom._;
-import org.w3c.dom.svg._;
-
-import org.apache.batik.transcoder.{Transcoder, TranscoderInput, TranscoderOutput}
+import org.apache.batik.transcoder.{TranscoderInput, TranscoderOutput}
 import org.apache.batik.transcoder.image.PNGTranscoder
 import org.apache.fop.svg.PDFTranscoder
 
 object ExpressionDiagram {
-
   private val PADDING = 10
   private val PADDING_HALF = 5
   
@@ -31,6 +21,7 @@ object ExpressionDiagram {
     def w: Int
     def h: Int
   }
+
   private class OrGraph(children: List[Graph], g: Graphics2D) extends Graph {
     def apply: Unit = {
       val prev = g.getTransform
@@ -87,6 +78,7 @@ object ExpressionDiagram {
     def w = (0/:children)((m, e) => if(m < e.w) e.w else m) + (2 * PADDING)
     def h = (children.length * PADDING) + (0/:children)((m, e) => m + e.h)
   }
+
   private class SeqGraph(children: List[Graph], g: Graphics2D) extends Graph {
     def apply: Unit = {
       val prev = g.getTransform
@@ -108,8 +100,8 @@ object ExpressionDiagram {
     def w = (children.length * PADDING) + (0/:children)((m, e) => m + e.w)
     def h = (0/:children)((m, e) => if(m < e.h) e.h else m)
   }
+
   private abstract class CrossingGraph(child: Graph, g: Graphics2D) extends Graph {
-    
     protected def drawDirection(offsetX: Int, offsetY: Int)
     
     def apply {
@@ -141,6 +133,7 @@ object ExpressionDiagram {
     def w = child.w + (2 * PADDING)
     def h = child.h + (2 * PADDING)
   }
+
   private class OptionalGraph(child: Graph, g: Graphics2D) extends CrossingGraph(child, g) {
     protected def drawDirection(offsetX: Int, offsetY: Int) {
       val path = new GeneralPath
@@ -151,6 +144,7 @@ object ExpressionDiagram {
       g.fill(path)
     }
   }
+
   private class OneToManyGraph(child: Graph, g: Graphics2D) extends CrossingGraph(child, g) {
     protected def drawDirection(offsetX: Int, offsetY: Int) {
       val path = new GeneralPath
@@ -210,24 +204,23 @@ object ExpressionDiagram {
     case LiteralExpression(l) => new LiteralGraph(l, g)
     case RuleRefExpression(n) => new RuleRefGraph(n, g)
   }
-  
+
   def transcode(name: String, format: String) {
-	val t = format match {
-	  case "png" => new PNGTranscoder()
-	  case "pdf" => new PDFTranscoder()
-	}
-	val input = new TranscoderInput(new java.io.File(name + ".svg").toURL().toString())
+    val t = format match {
+      case "png" => new PNGTranscoder()
+      case "pdf" => new PDFTranscoder()
+    }
+    val input = new TranscoderInput(new java.io.File(name + ".svg").toURL().toString())
 
-	// Create the transcoder output.
-	val ostream = new FileOutputStream(name + "." + format)
-	val output = new TranscoderOutput(ostream);
+    // Create the transcoder output.
+    val ostream = new FileOutputStream(name + "." + format)
+    val output = new TranscoderOutput(ostream);
 
-	// Save the image.
-	t.transcode(input, output);
+    // Save the image.
+    t.transcode(input, output);
 
-	// Flush and close the stream.
-	ostream.flush();
-	ostream.close();
+    // Flush and close the stream.
+    ostream.flush();
+    ostream.close();
   }
-  
 }

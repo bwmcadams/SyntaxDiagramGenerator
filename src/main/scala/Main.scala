@@ -3,12 +3,8 @@ package net.t32leaves.syntaxDiagramGenerator
 import scala.tools.nsc.CompilerCommand
 import scala.tools.nsc.Settings
 
-
-import scala.tools.nsc.CompilerCommand
-import scala.tools.nsc.Settings
-
 /** An object for running the plugin as standalone application.
- * 
+ *
  *  @todo: print, parse and apply plugin options !!!
  *  ideally re-use the TemplatePlugin (-> runsAfter, optionsHelp,
  *  processOptions, components, annotationChecker) instead of
@@ -24,26 +20,25 @@ object Main {
        *  This is automatically set to the value of 'plugin.commandname' in the
        *  file build.properties.
        */
-      override val cmdName = "generateDiagrams" 
+      override val cmdName = "generateDiagrams"
     }
 
     if (!command.ok)
-      return()
+      return
 
     /** The version number of this plugin is read from the properties file
      */
     if (settings.version.value) {
-      println(command.cmdName +" version "+ PluginProperties.versionString)
-      return()
+      println(command.cmdName + " version " + PluginProperties.versionString)
+      return
     }
     if (settings.help.value) {
       println(command.usageMsg)
-      return()
+      return
     }
 
     val runner = new PluginRunner(settings)
     val run = new runner.Run
     run.compile(command.files)
   }
-
 }
