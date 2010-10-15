@@ -185,14 +185,10 @@ object ExpressionDiagram {
   
 
   def apply(expr: Expression, name: String) = {
-    println("Apply on expr: %s, name: %s".format(expr, name))
 	  val impl = SVGDOMImplementation.getDOMImplementation();
-    println("Impl: %s".format(impl))
     val doc = impl.createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
-    println("Doc: %s".format(doc))
 
     val g = new SVGGraphics2D(doc);
-    println("G: %s".format(g))
     g.setFont(new Font("Helvetica", Font.BOLD, 10))
     val titleFontHeight = g.asInstanceOf[Graphics2D].getFontMetrics.getHeight
     g.drawString(name, PADDING: Float, PADDING + titleFontHeight: Float)

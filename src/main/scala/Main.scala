@@ -18,7 +18,6 @@ object Main {
   def main(args: Array[String]) {
     val settings = new Settings
     settings.classpath.value = System.getProperty("java.class.path")
-    println(settings)
 
     val command = new CompilerCommand(args.toList, settings) {
       /** The command name that will be printed in in the usage message.
@@ -28,7 +27,6 @@ object Main {
       override val cmdName = "generateDiagrams" 
     }
 
-    println(command)
     if (!command.ok)
       return()
 
@@ -44,7 +42,6 @@ object Main {
     }
 
     val runner = new PluginRunner(settings)
-    println("Run")
     val run = new runner.Run
     run.compile(command.files)
   }
