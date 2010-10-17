@@ -15,10 +15,11 @@ import scala.tools.nsc.Settings
  *  duplicating it here and in PluginRunner.
  */
 object Main {
-  def main(args: Array[String]) {
+  def main(args: Array[String]):Unit = {
+    if(args.size != 1) throw new IllegalArgumentException("Pass a single argument: the path to the file containing the grammar")
     val settings = new Settings
     settings.classpath.value = System.getProperty("java.class.path")
-
+    println("CLASSPATH: " + settings.classpath.value)
     val command = new CompilerCommand(args.toList, settings) {
       /** The command name that will be printed in in the usage message.
        *  This is automatically set to the value of 'plugin.commandname' in the

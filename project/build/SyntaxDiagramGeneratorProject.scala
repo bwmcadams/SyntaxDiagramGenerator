@@ -2,7 +2,9 @@ import sbt._
 
 class SynaxDiagramGeneratorProject(info: ProjectInfo) extends DefaultProject(info) with AutoCompilerPlugins {
 
-
+  val junit = "junit" % "junit" % "4.8.1"
+  val scalaTest = "org.scalatest" % "scalatest" % "1.2"
+  val batikCodec = "org.apache.xmlgraphics" % "batik-codec" % "1.7"
   val batikParser = "org.apache.xmlgraphics" % "batik-parser" % "1.7"
   val batikExtension = "org.apache.xmlgraphics" % "batik-extension" % "1.7"
   val batikSwing = "org.apache.xmlgraphics" % "batik-swing" % "1.7"
