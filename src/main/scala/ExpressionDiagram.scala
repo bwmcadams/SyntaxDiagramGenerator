@@ -75,7 +75,7 @@ object ExpressionDiagram {
       //g.drawLine(x, 0, x, y)
     }
     
-    def w = (0/:children)((m, e) => if(m < e.w) e.w else m) + (2 * PADDING)
+    def w = (0/:children)((m, e) => if(m < e.w) e.w else m) + (3 * PADDING)
     def h = (children.length * PADDING) + (0/:children)((m, e) => m + e.h)
   }
 
@@ -93,11 +93,11 @@ object ExpressionDiagram {
         g.translate(c.w, -dh)
       })
       g.drawLine(0, y, PADDING, y)
-      
+
       g.setTransform(prev)
     }
     
-    def w = (children.length * PADDING) + (0/:children)((m, e) => m + e.w)
+    def w = (children.length * PADDING) + (0/:children)((m, e) => m + e.w) + PADDING
     def h = (0/:children)((m, e) => if(m < e.h) e.h else m)
   }
 
@@ -116,21 +116,23 @@ object ExpressionDiagram {
       path.moveTo(0, 0)
       path.moveTo(0, h / 2)
       path.quadTo(0, ch / 2, PADDING, ch / 2)
+
       path.moveTo(cw + PADDING, ch / 2)
-      path.quadTo(cw + 2 * PADDING, ch / 2, cw + 2 * PADDING, h / 2)
+      path.lineTo(cw + 2 * PADDING, ch / 2)
+      path.quadTo(cw + 3 * PADDING, ch / 2, cw + 3 * PADDING, h / 2)
       
       path.moveTo(0, h / 2)
       path.lineTo(0, ch)
       path.quadTo(0, ch + PADDING, PADDING, ch + PADDING)
-      path.lineTo(cw + PADDING, ch + PADDING)
-      path.quadTo(cw + 2 * PADDING, ch + PADDING, cw + 2 * PADDING, ch)
-      path.lineTo(cw + 2 * PADDING, h / 2)
+      path.lineTo(cw + 2 * PADDING, ch + PADDING)
+      path.quadTo(cw + 3 * PADDING, ch + PADDING, cw + 3 * PADDING, ch)
+      path.lineTo(cw + 3 * PADDING, h / 2)
       g.draw(path)
       
       drawDirection((cw + PADDING) / 2, ch + PADDING_HALF)
     }
     
-    def w = child.w + (2 * PADDING)
+    def w = child.w + (3 * PADDING)
     def h = child.h + (2 * PADDING)
   }
 
