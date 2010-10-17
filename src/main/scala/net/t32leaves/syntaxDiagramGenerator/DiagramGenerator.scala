@@ -20,7 +20,7 @@ import scala.util.parsing.combinator.Parsers
  * - def production rules must not have parameters, otherwise they're not considered to be production rules
  * - val precedes def
  */
-
+object DiagramGenerator{ val OutputLocation = "output_diagrams/" }
 class DiagramGenerator(val global: Global) extends Plugin {
   import global._
   val repsepRE = new Regex("^[0-9a-zA-Z]*\\.this\\.repsep")
@@ -57,9 +57,11 @@ class DiagramGenerator(val global: Global) extends Plugin {
         cleanedExpressions.foreach(e => {
           try {
             val diag = ExpressionDiagram(e.expr, e.name)
-            diag.stream(new OutputStreamWriter(new FileOutputStream(e.name + ".svg"), "UTF-8"), true)
-            ExpressionDiagram.transcode(e.name, "png")
-            ExpressionDiagram.transcode(e.name, "pdf")
+            new java.io.File(DiagramGenerator.OutputLocation).mkdir()
+            val name = DiagramGenerator.OutputLocation + e.name
+            diag.stream(new OutputStreamWriter(new FileOutputStream(name + ".svg"), "UTF-8"), true)
+            ExpressionDiagram.transcode(name, "png")
+            ExpressionDiagram.transcode(name, "pdf")
           } catch {
             /*case ne: java.lang.NoClassDefFoundError => println("ERROR: %s".format(ne.getCause.getCause))*/
             case e => throw e

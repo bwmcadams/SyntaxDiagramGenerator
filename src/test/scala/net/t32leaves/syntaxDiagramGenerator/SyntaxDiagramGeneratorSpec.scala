@@ -6,7 +6,6 @@ class SyntaxDiagramGeneratorSpec extends scalatest.FlatSpec with scalatest.match
     Main.main(Array("src/main/scala/ebnf/EBNFParser.scala")) 
   }
   it should "create image files in the output directory" in { 
-    val out = "." // TODO output to dedicated directory, include in .gitignore
-    new java.io.File(out).list should contain("definitions_list.pdf")
+    new java.io.File(DiagramGenerator.OutputLocation).list should contain("definitions_list.pdf")
   }
 }
