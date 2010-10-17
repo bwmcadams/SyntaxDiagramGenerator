@@ -1,7 +1,5 @@
 package net.t32leaves.syntaxDiagramGenerator
 
-import scala.util.parsing.combinator._
-
 case class ProductionRule(name: String, expr: Expression) {
   override def toString = name + " = " + expr + ";"
 }
@@ -37,8 +35,8 @@ object ExpressionUtils {
     case SeqExpression(SeqExpression(c) :: rest) => compact(SeqExpression(c ++ rest))
     case OrExpression(c) if c.length == 1 => compact(c.head)
     case SeqExpression(c) if c.length == 1 => compact(c.head)
-    case OrExpression(c) => OrExpression(c map(compact(_)))
-    case SeqExpression(c) => SeqExpression(c map(compact(_)))
+    case OrExpression(c) => OrExpression(c map (compact(_)))
+    case SeqExpression(c) => SeqExpression(c map (compact(_)))
     case OptionExpression(c) => OptionExpression(compact(c))
     case OneToManyExpression(c) => OneToManyExpression(compact(c))
     case ZeroToManyExpression(c) => ZeroToManyExpression(compact(c))
@@ -46,12 +44,13 @@ object ExpressionUtils {
       println("Unable to compact unknown expression '%s' (%s)".format(expr, expr.getClass))
       expr
     }
-    //case _ => expr
   }
-  def filterNil(l: List[Expression]) = l filter(_ match {
+
+  def filterNil(l: List[Expression]) = l filter (_ match {
     case NilExpression => false
     case _ => true
-  }) map(cleanFromNil(_))
+  }) map (cleanFromNil(_))
+
   def cleanFromNil(expr: Expression): Expression = expr match {
     case OrExpression(children) => OrExpression(filterNil(children))
     case SeqExpression(children) => SeqExpression(filterNil(children))
@@ -60,10 +59,11 @@ object ExpressionUtils {
     case ZeroToManyExpression(child) => ZeroToManyExpression(cleanFromNil(child))
     case _ => expr
   }
+
   def resolveVirtualRules(expr: Expression, symbols: Map[String, Expression], virtualRules: List[String], maxDepth: Int): Expression = {
     def f(expr: Expression, symbols: Map[String, Expression], d: Int): Expression = expr match {
-      case OrExpression(children) => OrExpression(children map(f(_, symbols, d)))
-      case SeqExpression(children) => SeqExpression(children map(f(_, symbols, d)))
+      case OrExpression(children) => OrExpression(children map (f(_, symbols, d)))
+      case SeqExpression(children) => SeqExpression(children map (f(_, symbols, d)))
       case OptionExpression(child) => OptionExpression(f(child, symbols, d))
       case OneToManyExpression(child) => OneToManyExpression(f(child, symbols, d))
       case ZeroToManyExpression(child) => ZeroToManyExpression(f(child, symbols, d - 1))
@@ -73,12 +73,12 @@ object ExpressionUtils {
     }
     f(expr, symbols, maxDepth)
   }
-  
+
   def cleanRules(prodRules: List[ProductionRule], virtualRules: List[String], depth: Int) = {
     val compacted = prodRules.map(_ match {
       case ProductionRule(n, c) => ProductionRule(n, compact(cleanFromNil(c)))
     })
-    val rules = (Map[String, Expression]()/:compacted)((m, e) => m update(e.name, e.expr))
+    val rules = (Map[String, Expression]() /: compacted)((m, e) => m updated (e.name, e.expr))
     compacted.map(_ match {
       case ProductionRule(n, c) => ProductionRule(n, resolveVirtualRules(c, rules, virtualRules, depth))
     })

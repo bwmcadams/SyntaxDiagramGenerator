@@ -1,17 +1,13 @@
 package net.t32leaves.syntaxDiagramGenerator
 
 import java.io.{OutputStreamWriter, FileOutputStream}
-import org.w3c.dom.Document
 import scala.tools.nsc
 import nsc.Global
 import nsc.Phase
-import nsc.ast.TreeBrowsers
 import nsc.plugins.Plugin
 import nsc.plugins.PluginComponent
 
 import scala.util.matching.Regex
-
-import scala.util.parsing.combinator.Parsers
 
 /*
  * Assumptions and conventions
@@ -28,16 +24,14 @@ class DiagramGenerator(val global: Global) extends Plugin {
   val name = "generateDiagrams"
   val description = "Generates syntax diagrams out of parser combinator"
   val components = List[PluginComponent](Component)
-  
-  var virtualRules = 
-    (List[String]()/:pluginArgs.filter(_.startsWith("-P:virtual:")).map(_.substring("-P:virtual:".length).split(",").map(_.trim)))(_ ++ _)
-  var depth = {
-    var t = pluginArgs.filter(_.startsWith("-P:depth:"))
-    if(t.isEmpty) 1
+
+  val virtualRules = (List[String]() /: pluginArgs.filter(_.startsWith("-P:virtual:")).map(_.substring("-P:virtual:".length).split(",").map(_.trim)))(_ ++ _)
+  val depth = {
+    val t = pluginArgs.filter(_.startsWith("-P:depth:"))
+    if (t.isEmpty) 1
     else t.head.substring("-P:depth:".length).toInt
   }
-  
-  
+
   private object Component extends PluginComponent {
     val global: DiagramGenerator.this.global.type = DiagramGenerator.this.global
     val runsAfter = List[String]("liftcode")
