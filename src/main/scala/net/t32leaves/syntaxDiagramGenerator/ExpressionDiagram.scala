@@ -27,7 +27,9 @@ object ExpressionDiagram {
     def apply: Unit = {
       val prev = g.getTransform
 
-      val x = w
+      g.translate(PADDING, 0)
+
+      val x = w - 2 * PADDING
       children.foreach(c => {
         val dw = (x - c.w) / 2
         val ch = c.h
@@ -70,12 +72,12 @@ object ExpressionDiagram {
       })
 
       g.setTransform(prev)
-      //val y = h - children.last.h
-      //g.drawLine(0, 0, 0, y)
-      //g.drawLine(x, 0, x, y)
+      
+      g.drawLine(0, h / 2, PADDING, h / 2)
+      g.drawLine(w - PADDING, h / 2, w, h / 2)
     }
 
-    def w = (0 /: children)((m, e) => if (m < e.w) e.w else m) + (3 * PADDING)
+    def w = (0 /: children)((m, e) => if (m < e.w) e.w else m) + (5 * PADDING)
 
     def h = (children.length * PADDING) + (0 /: children)((m, e) => m + e.h)
   }
