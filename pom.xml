@@ -55,7 +55,12 @@
         <configuration>
           <launchers>
             <launcher>
+              <id>sdg</id>
               <mainClass>net.t32leaves.syntaxDiagramGenerator.Main</mainClass>
+            </launcher>
+            <launcher>
+              <id>ebnf</id>
+              <mainClass>net.t32leaves.syntaxDiagramGenerator.ebnf.Main</mainClass>
             </launcher>
           </launchers>
         </configuration>
