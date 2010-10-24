@@ -1,10 +1,8 @@
-Based upon sample code and examples laid out at:
-
-  http://blog.32leaves.net/?p=861
+Based upon sample code and examples laid out at: [http://blog.32leaves.net/?p=861](http://blog.32leaves.net/?p=861)
 
 Licensed under the original Creative Commons Attribution-Share Alike 3.0 Unported License.
 
-In SBT, run 'package' to build.
+In SBT, run `package` to build.
 
 Also you can use Maven.
 
@@ -29,6 +27,5 @@ java -Djava.awt.headless=true net.t32leaves.syntaxDiagramGenerator.Main <INPUT_P
 You can test it on the sample included via:
 
 java -Djava.awt.headless=true net.t32leaves.syntaxDiagramGenerator.Main src/main/scala/ebnf/EBNFParser.scala
-
 
 Creates a whole bunch of files.  Have fun!
