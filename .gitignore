@@ -4,6 +4,7 @@ target/
 lib_managed/
 src_managed/
 project/boot/
+project/build/
 *.svg
 *.pdf
 *.png
